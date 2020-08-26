@@ -1,0 +1,523 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+#define FALSE_VALUE 0
+#define TRUE_VALUE 1
+
+struct treeNode
+{
+    int item;
+    struct treeNode * left; //points to left child
+    struct treeNode * right; //points to right child
+};
+
+struct treeNode * root;
+
+
+void initializeTree()
+{
+    root = 0;
+}
+
+
+struct treeNode * searchItem(struct treeNode * node, int item)
+{
+
+
+ if(node==0 || node->item==item) //zodi node ta Null thake ba item ta root item er soman thake
+   {
+      return node;
+   }
+   else if(item>node->item)
+   {
+       return searchItem(node->right,item);
+   }
+   else{
+    return searchItem(node->left,item);
+   }
+// Solve using recursion
+};
+
+struct treeNode * searchPrev(struct treeNode * node,int item,struct treeNode * prev)
+{
+
+    if(node==0 || node->item ==item) //zodi amar dewa item node er item er soman hoy
+        {
+            return prev;//parent
+        }
+
+    if(node->item < item)
+    {
+				 prev=node;
+        return searchPrev(node->right, item,prev); //recursion
+    }
+    else
+    {             prev=node;
+
+        return searchPrev(node->left, item,prev); //recursion
+    }
+
+// Return the parent node of the item using recursion
+};
+
+struct treeNode * makeTreeNode(int item)
+{
+    struct treeNode * node ;
+    node = (struct treeNode *)malloc(sizeof(struct treeNode));
+    node->item = item;
+    node->left = 0;
+    node->right = 0;
+    return node;
+};
+
+
+
+struct treeNode *  insertItem(struct treeNode * node, int item)
+{
+    if(node==0){
+		node= makeTreeNode(item);
+        return node;
+    }
+    else if(item<node->item)
+    {
+        node->left=insertItem(node->left,item);
+    }
+    else
+    {
+		   node->right=insertItem(node->right,item);
+
+    }
+
+    return node;
+ /*struct treeNode *temp,*newnode,*prev;
+    temp=root;
+
+    newnode = (struct  treeNode*)malloc(sizeof(struct  treeNode));
+    newnode->item=item;
+    newnode->left=0;
+    newnode->right=0;
+    if(root==0)
+    {
+	  root=newnode;
+          return 0;
+    }
+
+
+    while(temp!=0)
+    {
+        if(item>=temp->item)  //zodi item temp er item theke boro hoy right e jabe
+        {
+            prev=temp;
+            temp=temp->right;
+        }
+        else     //other wise left e jabe
+        {
+            prev=temp;
+            temp=temp->left;
+        }
+
+
+    }
+    if(item<prev->item)
+    {
+        prev->left=newnode;
+    }
+    else
+    {
+        prev->right=newnode;
+}
+
+     */
+}
+
+  int findMax(int a, int b){
+  if(a >= b)
+    return a;
+  else
+    return b;
+}
+
+int calcNodeHeight(struct treeNode * node)
+{
+  if(node == NULL)
+    return 0;
+
+  return findMax(calcNodeHeight(node->left), calcNodeHeight(node->right)) + 1;
+// return height (maximum distance from node to leaf + 1) using recursion
+}
+
+
+int calcHeight(int item) //return height of an item in the tree
+{
+	return calcNodeHeight(searchItem(root,item));
+ // return height of an item using calcNodeHeight function
+}
+
+int getSize(struct treeNode * node)
+{
+  if(node == 0)
+    return 0;
+
+  return 1+getSize(node->left)+getSize(node->right) ;
+    // return size of the tree with node(argument) as root using recursion
+}
+
+int calcNodeDepth(struct treeNode * Niloy,struct treeNode * node)
+{
+    //calculate depth of level of a node using recursion
+
+    if(Niloy==NULL){
+        return 0;
+    }
+    if(Niloy->item==node->item){
+        return 0;
+    }
+    else if(node->item < Niloy->item){
+        return calcNodeDepth(Niloy->left, node)+1;
+    }
+    else{
+        return calcNodeDepth(Niloy->right, node)+1;
+    }
+}
+
+int findLCA(struct treeNode *node,int item1,int item2)
+{
+	if (node == 0) return NULL;
+
+
+    if (node->item > item1 && node->item > item2)
+        return findLCA(node->left, item1, item2);
+
+
+    if (node->item <item1 && node->item < item2)
+        return findLCA(node->right, item1, item2);
+
+    return node->item;
+
+  //Find lowest common ancestors of item1 and item2 using recursion
+}
+
+int calcDepth(int jakir)
+{
+
+
+    return calcNodeDepth(root,searchItem(root,jakir));
+    //Return depth or level of an item using calcNodeDepth function
+}
+
+
+int deleteItem(struct treeNode * node, int item)
+{
+
+    struct treeNode *temp = root;
+    struct treeNode *prev = 0;
+struct treeNode *minx;
+
+    //Search korar jonno;
+    while (temp != 0)
+    {
+        if (item > temp->item)
+        {
+            prev = temp;
+            temp = temp->right;
+        }
+        else if (item < temp->item)
+        {
+            prev = temp;
+            temp = temp->left;
+        }
+        else
+        {
+
+            //  kono child nah takle
+           if ( temp -> left == 0 && temp -> right == 0 )
+{
+    printf("Deleting ........\n");
+    if (prev->left == temp)
+    {
+        prev->left = 0;
+    }
+    else
+    {
+        prev->right = 0;
+    }
+
+
+    temp = 0;
+    break;
+ }
+            //ekta child er jonno
+            else if (temp->left == 0 || temp->right == 0)
+            {
+                printf("Deleting...........\n");
+
+                if (temp->left != 0)
+                {
+
+                    prev->left=temp->left  ;
+                }
+                else
+                {
+                    prev->right =temp->right ;
+                }
+
+
+            }
+            else
+            {
+                printf("Deleting .............\n");
+
+                minx = temp->right;
+                //for minimum
+                while (minx->left != 0)
+                {
+                    minx = minx->left;
+                }
+
+                temp->item = minx->item;
+
+            }
+
+            break;
+        }
+    }
+
+    //write your code from previous assignment here, you do not need to implement using recursion
+}
+
+int getMinItem(struct treeNode * node)
+{
+    if (node->left == NULL)
+
+        return node->item;
+
+    return getMinItem(node->left);
+                      //return the minimum item in the tree using recursion
+}
+
+       int getMaxItem(struct treeNode * node)
+{
+    if (node->right == NULL)
+
+        return node->item;
+
+    return getMaxItem(node->right);
+                      //return the maximum item in the tree using recursion
+}
+
+int rangeSearch(struct treeNode * node, int leftBound, int rightBound)
+{
+	  if(node == 0)
+            return 0;
+
+        if(node->item >= leftBound && node->item <= rightBound)
+            return 1 +rangeSearch(node->left, leftBound, rightBound)+ rangeSearch(node->right, leftBound, rightBound);
+
+
+        else if(node->item < leftBound)
+            return rangeSearch(node->right, leftBound, rightBound);
+
+
+        else
+            return rangeSearch(node->left, leftBound,rightBound);
+ //returns number of items in the range of leftBound and rightBound using recursion
+}
+
+int findInOrderSuccessor(int item)
+{
+    struct treeNode *temp,*items,*s,*k;
+    s=root;
+    items= searchItem(root,item);
+    if(items->right!=0)
+    {
+        temp=items->right;
+        while(temp->left!=0)
+        {
+            temp = temp->left;
+        }
+        return temp->item;
+    }
+
+    while(s->item!=items->item)
+    {
+        if(items->item<=s->item)
+        {
+            k=s;
+            s=s->left;
+
+        }
+        else
+            return s->item;
+    }
+
+    //return In order successor of the item in the tree (You need not use recursion)
+}
+
+void printInOrder(struct treeNode * node, int height)
+{
+    if(node==0) return;
+
+    //print left sub-tree
+    printInOrder(node->left, height-1);
+
+    //print item
+    for(int i=0;i<height;i++)printf("   ");
+    printf("%03d\n",node->item);
+
+    //print right sub-tree
+    printInOrder(node->right, height-1);
+}
+
+void printPreOrder(struct treeNode * node,int height)
+{
+	   if(node==0) return;
+		 //print item
+     printf("%d,\n",node->item);
+    //print left sub-tree
+   printPreOrder(node->left, height-1);
+
+    //print right sub-tree
+  printPreOrder(node->right, height-1);
+
+
+}
+
+void printPostOrder(struct treeNode * node, int height)
+{
+
+    if(node==0) return;
+		 //print item
+
+    //print left sub-tree
+  printPostOrder(node->left, height-1);
+
+    //print right sub-tree
+ printPostOrder(node->right, height-1);
+
+
+    printf("%d,\n",node->item);
+    //Write your code using recursion to print the tree in post-order
+}
+
+int main(void)
+{
+    initializeTree();
+    while(1)
+    {
+        printf("1. Insert item. 2. searchPrev. 3. Search item. \n");
+        printf("4. Print height of tree. 5. Print height of an item. \n");
+        printf(" 6. PrintInOrder. 7. PrintPreOrder 8. PrintPostOrder\n");
+        printf(" 9. Print depth of an item. 10.Print size 11.Get Minimum 12.Get Maximum \n");
+        printf("13.Delete item 14.RangeSearch 15.findLCA  16.findInorderSuccessor 17.Exit\n");
+
+        int ch;
+        scanf("%d",&ch);
+        if(ch==1)
+        {
+            int item;
+            scanf("%d", &item);
+            root=insertItem(root, item);
+        }
+        else if(ch==2)
+        {
+            int item;
+            scanf("%d", &item);
+            struct treeNode * res = searchPrev(root,item,root);
+            if(res==0) printf("No parent found.\n");
+            else printf("parent found :%d\n",res->item);
+        }
+        else if(ch==3)
+        {
+            int item;
+            scanf("%d", &item);
+            struct treeNode * res = searchItem(root, item);
+            if(res!=0) printf("Found.\n");
+            else printf("Not found.\n");
+        }
+        else if(ch==4)
+        {
+            int height = calcNodeHeight(root);
+            printf("Height of tree = %d\n", height);
+        }
+        else if(ch==5)
+        {
+            int item;
+            scanf("%d", &item);
+            int height = calcHeight(item);
+            printf("Height of %d = %d\n", item, height);
+        }
+        else if(ch==6)
+        {
+            int h = calcNodeHeight(root);
+            printf("\n--------------------------------\n");
+            printInOrder(root, h);
+            printf("--------------------------------\n");
+        }
+        else if(ch==7)
+        {
+            int h = calcNodeHeight(root);
+            printf("\n--------------------------------\n");
+            printPreOrder(root, h);
+            printf("--------------------------------\n");
+        }
+        else if(ch==8)
+        {
+            int h = calcNodeHeight(root);
+            printf("\n--------------------------------\n");
+            printPostOrder(root, h);
+            printf("--------------------------------\n");
+        }
+        else if(ch==9)
+        {
+            int item;
+            scanf("%d", &item);
+            int depth = calcDepth(item);
+            printf("Depth of %d = %d\n", item, depth);
+        }
+        else if(ch==10)
+        {
+            printf("Size of tree is %d\n",getSize(root));
+        }
+        else if(ch==11)
+        {
+            printf("%d\n",getMinItem(root));
+        }
+        else if(ch==12)
+        {
+            printf("%d\n",getMaxItem(root));
+        }
+        else if(ch==13)
+        {
+            int item;
+            scanf("%d",&item);
+            int func = deleteItem(root,item);
+            if(func==-1) printf("Item not present\n");
+            else printf("Deleted item: %d\n",item);
+        }
+        else if(ch==14)
+        {
+            int leftBound,rightBound;
+            scanf("%d %d",&leftBound,&rightBound);
+            int num = rangeSearch(root,leftBound,rightBound);
+            printf("%d\n",num);
+        }
+        else if(ch==15)
+        {
+            int item1,item2;
+            scanf("%d %d",&item1,&item2);
+            printf("LCA is: %d\n",findLCA(root,item1,item2));
+        }
+        else if(ch==16)
+        {
+            int item;
+            scanf("%d",&item);
+            printf("In order successor of %d is: %d\n",item,findInOrderSuccessor(item));
+        }
+        else if(ch==17)
+        {
+            break;
+        }
+    }
+
+}
+
